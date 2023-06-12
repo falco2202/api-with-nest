@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 export default class PostService {
   constructor(
     @InjectRepository(Post)
-    private readonly postRepository: Repository<Post>
+    private readonly postRepository: Repository<Post>,
   ) {}
 
   private lastPostId = 0;
@@ -20,7 +20,7 @@ export default class PostService {
   }
 
   async getPostById(id: number) {
-    const post = await this.postRepository.findOne({where: {id: id}});
+    const post = await this.postRepository.findOne({ where: { id: id } });
     if (post) {
       return post;
     }
@@ -29,13 +29,14 @@ export default class PostService {
 
   async updatePost(id: number, post: UpdatePostDto) {
     await this.postRepository.update(id, post);
-    const updatedPost = await this.postRepository.findOne({where: {id: id}});
+    const updatedPost = await this.postRepository.findOne({
+      where: { id: id },
+    });
     if (updatedPost) {
-      return updatedPost
+      return updatedPost;
     }
     throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
   }
-  
 
   async createPost(post: CreatePostDto) {
     const newPost = await this.postRepository.create(post);
@@ -45,8 +46,8 @@ export default class PostService {
 
   async deletePost(id: number) {
     const deleteResponse = await this.postRepository.delete(id);
-    if(!deleteResponse.affected) {
-      throw new HttpException('Post not found', HttpStatus.NOT_FOUND)
+    if (!deleteResponse.affected) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
     }
   }
 }
