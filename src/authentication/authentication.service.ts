@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
 import { UserService } from 'src/users/user.service';
 import * as bcrypt from 'bcrypt';
@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from './tokenPayload.interface';
 
+@Injectable()
 export class AuthenticationService {
   constructor(
     private readonly userService: UserService,
@@ -40,16 +41,7 @@ export class AuthenticationService {
   public async getAuthenticatedUser(email: string, hashedPassword: string) {
     try {
       const user = await this.userService.getByEmail(email);
-      const isPasswordMatching = await bcrypt.compare(
-        hashedPassword,
-        user.password,
-      );
-      if (!isPasswordMatching) {
-        throw new HttpException(
-          'Wrong credentials provided',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      await this.verifyPassword(hashedPassword, user.password);
       user.password = undefined;
       return user;
     } catch (error) {

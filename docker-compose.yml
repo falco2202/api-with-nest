@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   postgres:
-    container_name: postgres
+    container_name: postgres-blog
     image: postgres:latest
     ports:
     - "5432:5432"
@@ -15,7 +15,7 @@ services:
   pgadmin:
     links:
     - postgres:postgres
-    container_name: pgadmin
+    container_name: pgadmin-blog
     image: dpage/pgadmin4
     ports:
     - "8080:80"

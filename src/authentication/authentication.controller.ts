@@ -15,7 +15,7 @@ import { LocalAuthenticationGuard } from './localAuthentication.guard';
 import JwtAuthenticationGuard from './jwt-authentication.guard';
 import { Response } from 'express';
 
-@Controller('authentication')
+@Controller('auth')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
@@ -26,15 +26,17 @@ export class AuthenticationController {
 
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
-  @Post('log-in')
-  async logIn(@Req() request: RequestWithUser) {
-    const user = request.user;
+  @Post('login')
+  async logIn(@Req() request: RequestWithUser, @Res() response: Response) {
+    const { user } = request;
+    const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
+    response.setHeader('Set-Cookie', cookie);
     user.password = undefined;
-    return user;
+    return response.send(user);
   }
 
   @UseGuards(JwtAuthenticationGuard)
-  @Post('log-out')
+  @Post('logout')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
     response.setHeader(
       'Set-Cookie',
