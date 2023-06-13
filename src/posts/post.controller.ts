@@ -13,7 +13,8 @@ import PostService from './post.service';
 import CreatePostDto from './dto/createPost.dto';
 import UpdatePostDto from './dto/updatePost.dto';
 import JwtAuthenticationGuard from 'src/authentication/jwt-authentication.guard';
-import { ExceptionLoggerFilter } from 'src/utils/exceptionLogger.filter';
+import { ExceptionLoggerFilter } from 'src/utils/exceptionLoggerFilter.exception';
+import FindOneParams from 'src/utils/findOneParams';
 
 @Controller('posts')
 export default class PostController {
@@ -26,7 +27,7 @@ export default class PostController {
 
   @Get(':id')
   @UseFilters(ExceptionLoggerFilter)
-  getPostById(@Param('id') id: string) {
+  getPostById(@Param('id') id: FindOneParams) {
     return this.postService.getPostById(Number(id));
   }
 
